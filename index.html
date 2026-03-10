@@ -2141,8 +2141,8 @@ btnLoop.addEventListener('click', () => {
 });
 
 /* Visualizer toggle (button in footer) */
-btnViz.addEventListener('click', toggleVisualizer);
-vizToggleBtn.addEventListener('click', toggleVisualizer);
+if (btnViz) btnViz.addEventListener('click', toggleVisualizer);
+if (vizToggleBtn) vizToggleBtn.addEventListener('click', toggleVisualizer);
 
 /* Cassette module always visible — no toggle needed */
 
