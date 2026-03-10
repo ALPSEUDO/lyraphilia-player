@@ -547,14 +547,15 @@ body::after {
   letter-spacing: 0.15em;
 }
 
-/* --- FERROFLUID VISUALIZER --- */
+/* --- CASSETTE MODULE --- */
 #visualizer-module {
   position: relative;
   overflow: hidden;
   background: var(--bg-inset);
   border: 1px solid var(--line-muted);
   border-radius: var(--radius);
-  display: block; /* Shown beside artwork */
+  display: flex;
+  flex-direction: column;
   min-height: 200px;
 }
 #viz-label {
@@ -568,6 +569,89 @@ body::after {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-shrink: 0;
+}
+
+/* Cassette SVG container */
+#cassette-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+}
+#cassette-svg {
+  width: 100%;
+  height: 100%;
+  max-width: 280px;
+  max-height: 200px;
+}
+
+/* Reel spin animations */
+.cassette-reel-left {
+  transform-origin: 72px 98px;
+  animation: none;
+}
+.cassette-reel-right {
+  transform-origin: 188px 98px;
+  animation: none;
+}
+.cassette-reel-left.spinning {
+  animation: reelSpinL 1.8s linear infinite;
+}
+.cassette-reel-right.spinning {
+  animation: reelSpinR 1.8s linear infinite;
+}
+@keyframes reelSpinL {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes reelSpinR {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Tape line pulse */
+.tape-line {
+  stroke-dasharray: 4 3;
+  animation: tapePulse 2s linear infinite;
+}
+.tape-line.active {
+  animation: tapeFlow 0.8s linear infinite;
+}
+@keyframes tapePulse {
+  from { stroke-dashoffset: 0; }
+  to   { stroke-dashoffset: 14; }
+}
+@keyframes tapeFlow {
+  from { stroke-dashoffset: 0; }
+  to   { stroke-dashoffset: -28; }
+}
+
+/* Status dot */
+#cassette-status-dot {
+  fill: var(--accent-gold);
+  opacity: 0.4;
+  animation: statusBlink 3s step-end infinite;
+}
+#cassette-status-dot.active {
+  opacity: 1;
+  animation: statusBlink 1s step-end infinite;
+}
+@keyframes statusBlink {
+  0%,100% { opacity: 1; }
+  50%      { opacity: 0.2; }
+}
+
+/* Counter display */
+#cassette-counter {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 4px 0 8px;
+  flex-shrink: 0;
 }
 #visualizer-canvas {
   width: 100%;
@@ -988,13 +1072,100 @@ body::after {
         </div>
       </div>
 
-      <!-- FERROFLUID VISUALIZER — beside artwork -->
+      <!-- CASSETTE TRANSPORT MODULE -->
       <div class="module" id="visualizer-module" aria-hidden="true">
         <div id="viz-label">
-          <span>SIGNAL / VISUALIZER</span>
-          <button id="viz-toggle" style="background:none;border:none;cursor:pointer;font-family:var(--mono);font-size:8px;color:var(--text-muted);letter-spacing:0.1em;">▣</button>
+          <span>TAPE / TRANSPORT</span>
+          <span class="module-label-accent" id="cassette-state-label">STANDBY</span>
         </div>
-        <canvas id="visualizer-canvas" style="width:100%;height:calc(100% - 28px);display:block;"></canvas>
+        <div id="cassette-container">
+          <svg id="cassette-svg" viewBox="0 0 260 160" xmlns="http://www.w3.org/2000/svg">
+
+            <!-- Outer cassette body -->
+            <rect x="8" y="18" width="244" height="130" rx="6" ry="6"
+                  fill="#0a0f18" stroke="#2a3f5c" stroke-width="1.5"/>
+
+            <!-- Inner recess window -->
+            <rect x="28" y="38" width="204" height="80" rx="4" ry="4"
+                  fill="#080c14" stroke="#1e2d42" stroke-width="1"/>
+
+            <!-- Label area -->
+            <rect x="38" y="44" width="184" height="62" rx="2"
+                  fill="#0d1624" stroke="#1e2d42" stroke-width="0.5"/>
+
+            <!-- Label text -->
+            <text x="130" y="62" font-family="Courier New, monospace" font-size="7"
+                  fill="#3d5a7a" text-anchor="middle" letter-spacing="2">LYRAPHILIA DREAMS</text>
+            <text x="130" y="72" font-family="Courier New, monospace" font-size="5"
+                  fill="#2a3f5c" text-anchor="middle" letter-spacing="1.5">COVERS — an L SUDO project</text>
+
+            <!-- Tape window cutout -->
+            <ellipse cx="72" cy="90" rx="26" ry="26" fill="#050810" stroke="#1e2d42" stroke-width="0.8"/>
+            <ellipse cx="188" cy="90" rx="26" ry="26" fill="#050810" stroke="#1e2d42" stroke-width="0.8"/>
+
+            <!-- Tape path line across bottom of window -->
+            <path d="M 46 106 Q 72 112 130 109 Q 188 112 214 106"
+                  fill="none" stroke="#2a3f5c" stroke-width="1.5"
+                  class="tape-line" id="tape-path"/>
+
+            <!-- LEFT REEL -->
+            <g class="cassette-reel-left" id="svg-reel-left">
+              <!-- Outer ring -->
+              <circle cx="72" cy="90" r="20" fill="none" stroke="#2a3f5c" stroke-width="1"/>
+              <!-- Hub -->
+              <circle cx="72" cy="90" r="7" fill="#0a0f18" stroke="#3d5a7a" stroke-width="1"/>
+              <!-- Spokes -->
+              <line x1="72" y1="83" x2="72" y2="70" stroke="#2a3f5c" stroke-width="0.8"/>
+              <line x1="72" y1="97" x2="72" y2="110" stroke="#2a3f5c" stroke-width="0.8"/>
+              <line x1="65" y1="90" x2="52" y2="90" stroke="#2a3f5c" stroke-width="0.8"/>
+              <line x1="79" y1="90" x2="92" y2="90" stroke="#2a3f5c" stroke-width="0.8"/>
+              <line x1="67" y1="85" x2="58" y2="76" stroke="#2a3f5c" stroke-width="0.8"/>
+              <line x1="77" y1="95" x2="86" y2="104" stroke="#2a3f5c" stroke-width="0.8"/>
+              <!-- Tape wound around reel -->
+              <circle cx="72" cy="90" r="14" fill="none" stroke="#1e2d42" stroke-width="3" stroke-dasharray="3 2"/>
+            </g>
+
+            <!-- RIGHT REEL -->
+            <g class="cassette-reel-right" id="svg-reel-right">
+              <circle cx="188" cy="90" r="20" fill="none" stroke="#2a3f5c" stroke-width="1"/>
+              <circle cx="188" cy="90" r="7" fill="#0a0f18" stroke="#3d5a7a" stroke-width="1"/>
+              <line x1="188" y1="83" x2="188" y2="70" stroke="#2a3f5c" stroke-width="0.8"/>
+              <line x1="188" y1="97" x2="188" y2="110" stroke="#2a3f5c" stroke-width="0.8"/>
+              <line x1="181" y1="90" x2="168" y2="90" stroke="#2a3f5c" stroke-width="0.8"/>
+              <line x1="195" y1="90" x2="208" y2="90" stroke="#2a3f5c" stroke-width="0.8"/>
+              <line x1="183" y1="85" x2="174" y2="76" stroke="#2a3f5c" stroke-width="0.8"/>
+              <line x1="193" y1="95" x2="202" y2="104" stroke="#2a3f5c" stroke-width="0.8"/>
+              <circle cx="188" cy="90" r="14" fill="none" stroke="#1e2d42" stroke-width="3" stroke-dasharray="3 2"/>
+            </g>
+
+            <!-- Centre hub/capstan -->
+            <circle cx="130" cy="138" r="4" fill="#0a0f18" stroke="#2a3f5c" stroke-width="0.8"/>
+            <circle cx="130" cy="138" r="1.5" fill="#3d5a7a"/>
+
+            <!-- Corner screw details -->
+            <circle cx="20" cy="30" r="3" fill="#080c14" stroke="#1e2d42" stroke-width="0.5"/>
+            <circle cx="240" cy="30" r="3" fill="#080c14" stroke="#1e2d42" stroke-width="0.5"/>
+            <circle cx="20" cy="138" r="3" fill="#080c14" stroke="#1e2d42" stroke-width="0.5"/>
+            <circle cx="240" cy="138" r="3" fill="#080c14" stroke="#1e2d42" stroke-width="0.5"/>
+            <!-- Screw cross marks -->
+            <line x1="18" y1="30" x2="22" y2="30" stroke="#1e2d42" stroke-width="0.5"/>
+            <line x1="20" y1="28" x2="20" y2="32" stroke="#1e2d42" stroke-width="0.5"/>
+            <line x1="238" y1="30" x2="242" y2="30" stroke="#1e2d42" stroke-width="0.5"/>
+            <line x1="240" y1="28" x2="240" y2="32" stroke="#1e2d42" stroke-width="0.5"/>
+            <line x1="18" y1="138" x2="22" y2="138" stroke="#1e2d42" stroke-width="0.5"/>
+            <line x1="20" y1="136" x2="20" y2="140" stroke="#1e2d42" stroke-width="0.5"/>
+            <line x1="238" y1="138" x2="242" y2="138" stroke="#1e2d42" stroke-width="0.5"/>
+            <line x1="240" y1="136" x2="240" y2="140" stroke="#1e2d42" stroke-width="0.5"/>
+
+            <!-- Status indicator dot -->
+            <circle id="cassette-status-dot" cx="130" cy="80" r="2.5"/>
+
+            <!-- Gold accent line -->
+            <line x1="55" y1="78" x2="205" y2="78" stroke="#c8a86f" stroke-width="0.4" opacity="0.3"/>
+
+          </svg>
+        </div>
+        <div id="cassette-counter">——:—— / ——:——</div>
       </div>
 
     </div><!-- /top-left -->
@@ -1157,8 +1328,8 @@ body::after {
 const TRACKS = [
   {
     num: 1,
-    title: "Regulate (feat. Defence HQ 25)",
-    artist: "Lyraphilia Dreams  – Radio Edit",
+    title: "Are You Happy Now?",
+    artist: "Lyraphilia Dreams",
     src: "https://pub-b333ae075b3b4a25901ab0700b4271c8.r2.dev/audio/01.wav",           // ← REPLACE with real path
     artwork: "", // ← REPLACE or leave ''
     lyrics: "",                     // ← ADD lyrics here
@@ -1168,8 +1339,8 @@ const TRACKS = [
   },
   {
     num: 2,
-    title: "Black Rain (feat. Lyraphilia)",
-    artist: "Lyraphilia Dreams",
+    title: "Regulate (feat. Defence HQ 25)",
+    artist: "Lyraphilia Dreams – Radio Edit",
     src: "https://pub-b333ae075b3b4a25901ab0700b4271c8.r2.dev/audio/02.wav",
     artwork: "",
     lyrics: "",
@@ -1179,7 +1350,7 @@ const TRACKS = [
   },
   {
     num: 3,
-    title: "Manuscrit trouvé… (feat. R970)",
+    title: "Black Rain (feat. Lyraphilia)",
     artist: "Lyraphilia Dreams",
     src: "https://pub-b333ae075b3b4a25901ab0700b4271c8.r2.dev/audio/03.wav",
     artwork: "",
@@ -1190,7 +1361,7 @@ const TRACKS = [
   },
   {
     num: 4,
-    title: "Rotten Brain (feat. yolkhead///diskrot)",
+    title: "Manuscrit trouvé… (feat. R970)",
     artist: "Lyraphilia Dreams",
     src: "https://pub-b333ae075b3b4a25901ab0700b4271c8.r2.dev/audio/04.wav",
     artwork: "",
@@ -1201,7 +1372,7 @@ const TRACKS = [
   },
   {
     num: 5,
-    title: "LOADED GUN COMPLEX (feat. L SUDO)",
+    title: "Rotten Brain (feat. yolkhead///diskrot)",
     artist: "Lyraphilia Dreams",
     src: "https://pub-b333ae075b3b4a25901ab0700b4271c8.r2.dev/audio/05.wav",
     artwork: "",
@@ -1212,7 +1383,7 @@ const TRACKS = [
   },
   {
     num: 6,
-    title: "Put Out My Fire (feat. gnomestones)",
+    title: "LOADED GUN COMPLEX (feat. L SUDO)",
     artist: "Lyraphilia Dreams",
     src: "https://pub-b333ae075b3b4a25901ab0700b4271c8.r2.dev/audio/06.wav",
     artwork: "",
@@ -1223,7 +1394,7 @@ const TRACKS = [
   },
   {
     num: 7,
-    title: "Fear Not (s1 ft.me) (feat. Saffryn)",
+    title: "Put Out My Fire (feat. gnomestones)",
     artist: "Lyraphilia Dreams",
     src: "https://pub-b333ae075b3b4a25901ab0700b4271c8.r2.dev/audio/07.wav",
     artwork: "",
@@ -1234,7 +1405,7 @@ const TRACKS = [
   },
   {
     num: 8,
-    title: "\"Shadows twist in my mind\" (feat. Lyraphilia)",
+    title: "Fear Not (s1 ft.me) (feat. Saffryn)",
     artist: "Lyraphilia Dreams",
     src: "https://pub-b333ae075b3b4a25901ab0700b4271c8.r2.dev/audio/08.wav",
     artwork: "",
@@ -1245,7 +1416,7 @@ const TRACKS = [
   },
   {
     num: 9,
-    title: "Perfect Place (feat. ilangelo)",
+    title: "\"Shadows twist in my mind\" (feat. Lyraphilia)",
     artist: "Lyraphilia Dreams",
     src: "https://pub-b333ae075b3b4a25901ab0700b4271c8.r2.dev/audio/09.wav",
     artwork: "",
@@ -1256,7 +1427,7 @@ const TRACKS = [
   },
   {
     num: 10,
-    title: "260121_2Pgg4 (UnrelentingMusicTherapists1520)",
+    title: "Perfect Place (feat. ilangelo)",
     artist: "Lyraphilia Dreams",
     src: "https://pub-b333ae075b3b4a25901ab0700b4271c8.r2.dev/audio/10.wav",
     artwork: "",
@@ -1267,7 +1438,7 @@ const TRACKS = [
   },
   {
     num: 11,
-    title: "Cycle (feat. GuestMusic82)",
+    title: "260121_2Pgg4 (UnrelentingMusicTherapists1520)",
     artist: "Lyraphilia Dreams",
     src: "https://pub-b333ae075b3b4a25901ab0700b4271c8.r2.dev/audio/11.wav",
     artwork: "",
@@ -1278,7 +1449,7 @@ const TRACKS = [
   },
   {
     num: 12,
-    title: "Are you happy now?",
+    title: "Cycle (feat. GuestMusic82)",
     artist: "Lyraphilia Dreams",
     src: "https://pub-b333ae075b3b4a25901ab0700b4271c8.r2.dev/audio/12.wav",
     artwork: "",
@@ -1409,6 +1580,7 @@ let audioCtx       = null;
 let analyser       = null;
 let sourceNode     = null;
 let vizAnimFrame   = null;
+let cassetteAnimFrame = null;
 
 /* Filter hidden tracks if special features disabled */
 const activeTracks = TRACKS.filter(t => !t.hidden || CONFIG.enableSpecialFeatures);
@@ -1764,6 +1936,7 @@ function updateInfoPanel() {
 
 /* Update play/pause button icons */
 function updatePlayUI() {
+  updateCassetteState();
   iconPlay.style.display  = isPlaying ? 'none' : 'block';
   iconPause.style.display = isPlaying ? 'block' : 'none';
   playstateLabel.textContent = isPlaying ? 'PLAYING' : 'PAUSED';
@@ -1900,82 +2073,37 @@ function nextTrack() {
    ============================================================ */
 
 function initVisualizer() {
-  if (!isVizEnabled) return;
-  if (!window.AudioContext && !window.webkitAudioContext) return;
-
-  if (!audioCtx) {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    analyser  = audioCtx.createAnalyser();
-    analyser.fftSize = 128;
-    sourceNode = audioCtx.createMediaElementSource(audio);
-    sourceNode.connect(analyser);
-    analyser.connect(audioCtx.destination);
-  }
-  if (audioCtx.state === 'suspended') audioCtx.resume();
-  drawVisualizer();
+  /* No-op — cassette animation is controlled by updateCassetteState() */
 }
 
-function drawVisualizer() {
-  if (!isVizEnabled || !analyser) return;
-  vizAnimFrame = requestAnimationFrame(drawVisualizer);
+function updateCassetteState() {
+  const reelL   = document.querySelector('.cassette-reel-left');
+  const reelR   = document.querySelector('.cassette-reel-right');
+  const tapePath = document.getElementById('tape-path');
+  const statusDot = document.getElementById('cassette-status-dot');
+  const stateLabel = document.getElementById('cassette-state-label');
+  const counter   = document.getElementById('cassette-counter');
 
-  const bufferLen = analyser.frequencyBinCount;
-  const dataArray = new Uint8Array(bufferLen);
-  analyser.getByteFrequencyData(dataArray);
-
-  const W = vizCanvas.width  = vizCanvas.offsetWidth;
-  const H = vizCanvas.height = vizCanvas.offsetHeight;
-  const ctx = vizCanvas.getContext('2d');
-
-  /* Dark fade trail for smooth motion */
-  ctx.fillStyle = 'rgba(8,12,20,0.18)';
-  ctx.fillRect(0, 0, W, H);
-
-  /* Ferrofluid blob — centred, fills the panel */
-  const cx = W / 2, cy = H / 2;
-  const baseR = Math.min(W, H) * 0.32;
-  const points = 128;
-
-  ctx.beginPath();
-  for (let i = 0; i <= points; i++) {
-    const angle = (i / points) * Math.PI * 2 - Math.PI / 2;
-    const idx   = Math.floor((i / points) * bufferLen);
-    const val   = dataArray[idx] / 255;
-    const spike = val * baseR * 0.85;
-    /* Smooth the spike with neighbour blend */
-    const prev  = dataArray[Math.max(idx - 1, 0)] / 255;
-    const next  = dataArray[Math.min(idx + 1, bufferLen - 1)] / 255;
-    const smooth = (prev + val + next) / 3;
-    const r = baseR + smooth * baseR * 0.85;
-    const x = cx + Math.cos(angle) * r;
-    const y = cy + Math.sin(angle) * r;
-    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  if (isPlaying) {
+    reelL  && reelL.classList.add('spinning');
+    reelR  && reelR.classList.add('spinning');
+    tapePath && tapePath.classList.add('active');
+    statusDot && statusDot.classList.add('active');
+    if (stateLabel) stateLabel.textContent = 'PLAYING';
+  } else {
+    reelL  && reelL.classList.remove('spinning');
+    reelR  && reelR.classList.remove('spinning');
+    tapePath && tapePath.classList.remove('active');
+    statusDot && statusDot.classList.remove('active');
+    if (stateLabel) stateLabel.textContent = isPlaying ? 'PLAYING' : 'PAUSED';
   }
-  ctx.closePath();
 
-  /* Glow fill */
-  const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, baseR * 1.6);
-  grad.addColorStop(0,   'rgba(111,168,200,0.55)');
-  grad.addColorStop(0.5, 'rgba(63,90,122,0.3)');
-  grad.addColorStop(1,   'rgba(200,168,111,0.05)');
-  ctx.fillStyle = grad;
-  ctx.fill();
-
-  /* Edge glow stroke */
-  ctx.strokeStyle = 'rgba(111,168,200,0.5)';
-  ctx.lineWidth = 1.5;
-  ctx.shadowColor = 'rgba(111,168,200,0.6)';
-  ctx.shadowBlur = 8;
-  ctx.stroke();
-  ctx.shadowBlur = 0;
-
-  /* Inner core dot */
-  const avgVol = dataArray.reduce((a,b) => a+b, 0) / bufferLen / 255;
-  ctx.beginPath();
-  ctx.arc(cx, cy, 4 + avgVol * 12, 0, Math.PI * 2);
-  ctx.fillStyle = 'rgba(200,168,111,0.6)';
-  ctx.fill();
+  if (counter) {
+    counter.textContent = formatTime(audio.currentTime) + ' / ' + formatTime(audio.duration);
+  }
 }
+
+function drawVisualizer() { /* legacy no-op */ }
 
 function toggleVisualizer() {
   isVizEnabled = !isVizEnabled;
@@ -2016,15 +2144,10 @@ btnLoop.addEventListener('click', () => {
 btnViz.addEventListener('click', toggleVisualizer);
 vizToggleBtn.addEventListener('click', toggleVisualizer);
 
-/* Expose viz button if enabled */
-if (CONFIG.enableVisualizer) {
-  btnViz.style.display = 'flex';
-  vizModule.style.display = 'block';
-  isVizEnabled = true;
-}
+/* Cassette module always visible — no toggle needed */
 
 /* Audio events */
-audio.addEventListener('timeupdate', updateProgress);
+audio.addEventListener('timeupdate', () => { updateProgress(); updateCassetteState(); });
 
 audio.addEventListener('ended', () => {
   if (CONFIG.autoplayNext) nextTrack();
