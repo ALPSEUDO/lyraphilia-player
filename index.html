@@ -1,0 +1,2179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LYRAPHILIA DREAMS – COVERS</title>
+
+<style>
+/* ============================================================
+   LYRAPHILIA DREAMS – COVERS
+   an L SUDO project
+   Web / USB Player — Single File Build
+   ============================================================ */
+
+/* --- RESET & BASE --- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg-deep:       #0d1117;
+  --bg-panel:      #111824;
+  --bg-module:     #0a0f18;
+  --bg-inset:      #080c14;
+  --line-muted:    #1e2d42;
+  --line-mid:      #2a3f5c;
+  --line-bright:   #3d5a7a;
+  --accent-blue:   #6fa8c8;
+  --accent-gold:   #c8a86f;
+  --accent-glow:   rgba(111,168,200,0.18);
+  --text-primary:  #c8d8e8;
+  --text-secondary:#7a9ab5;
+  --text-muted:    #3d5a7a;
+  --text-label:    #c8a86f;
+  --mono:          'Courier New', 'Lucida Console', monospace;
+  --sans:          'Trebuchet MS', 'Arial Narrow', Arial, sans-serif;
+  --radius:        2px;
+  --transition:    0.2s ease;
+}
+
+html, body {
+  height: 100%;
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+
+/* --- BACKGROUND SCHEMATIC --- */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--line-muted) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line-muted) 1px, transparent 1px);
+  background-size: 48px 48px;
+  opacity: 0.18;
+  pointer-events: none;
+  z-index: 0;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 60% at 20% 30%, rgba(13,25,48,0.7) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 50% at 80% 70%, rgba(8,18,36,0.6) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* --- SIGNAL TRACE ANIMATION --- */
+.signal-trace {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+.signal-trace svg {
+  width: 100%; height: 100%;
+  opacity: 0.12;
+}
+.trace-line {
+  stroke: var(--accent-blue);
+  stroke-width: 1;
+  fill: none;
+  stroke-dasharray: 300 1000;
+  animation: traceMove 8s linear infinite;
+}
+.trace-line:nth-child(2) { animation-delay: -3s; stroke: var(--accent-gold); opacity: 0.6; }
+.trace-line:nth-child(3) { animation-delay: -5s; }
+@keyframes traceMove {
+  0%   { stroke-dashoffset: 1300; }
+  100% { stroke-dashoffset: 0; }
+}
+
+/* --- LAYOUT WRAPPER --- */
+#app {
+  position: relative;
+  z-index: 2;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+/* --- HEADER --- */
+#header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 12px 0 16px;
+  border-bottom: 1px solid var(--line-muted);
+  margin-bottom: 16px;
+}
+.header-identity { line-height: 1.2; }
+.header-title {
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent-blue);
+}
+.header-subtitle {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+.header-meta {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  text-align: right;
+  line-height: 1.6;
+}
+.blink {
+  display: inline-block;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent-gold);
+  vertical-align: middle;
+  margin-right: 4px;
+  animation: blink 2s step-end infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.1} }
+
+/* --- MAIN GRID --- */
+#main-grid {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  grid-template-rows: auto 1fr;
+  gap: 12px;
+  flex: 1;
+}
+
+/* Top-left: artwork + visualizer side by side */
+#top-left {
+  grid-column: 1;
+  grid-row: 1;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  align-items: stretch;
+}
+
+/* --- MODULE PANEL BASE --- */
+.module {
+  background: var(--bg-panel);
+  border: 1px solid var(--line-muted);
+  border-radius: var(--radius);
+  position: relative;
+  overflow: hidden;
+}
+.module::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--line-mid), transparent);
+}
+.module-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 6px 10px 4px;
+  border-bottom: 1px solid var(--line-muted);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.module-label-accent {
+  color: var(--accent-gold);
+  font-size: 8px;
+}
+
+/* --- ARTWORK MODULE --- */
+#artwork-module {
+  aspect-ratio: 1;
+  width: 300px;
+  flex-shrink: 0;
+}
+#artwork-wrap {
+  position: relative;
+  width: 100%;
+  height: calc(100% - 28px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-inset);
+  overflow: hidden;
+  cursor: zoom-in;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+/* Gallery strip — slides horizontally */
+#gallery-strip {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transition: transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94);
+  will-change: transform;
+}
+.gallery-slide {
+  flex-shrink: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.gallery-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transform-origin: center center;
+  transition: transform 0.2s ease;
+  pointer-events: none;
+  will-change: transform;
+}
+
+/* Dot indicators */
+#gallery-dots {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 5px;
+  z-index: 10;
+  pointer-events: none;
+}
+.gallery-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  transition: background 0.2s, transform 0.2s;
+}
+.gallery-dot.active {
+  background: var(--accent-gold);
+  transform: scale(1.3);
+}
+
+/* Swipe hint arrows */
+.gallery-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(8,12,20,0.55);
+  border: 1px solid var(--line-mid);
+  color: var(--text-secondary);
+  width: 24px; height: 24px;
+  border-radius: var(--radius);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px;
+  cursor: pointer;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: all;
+}
+#artwork-wrap:hover .gallery-arrow { opacity: 1; }
+#gallery-prev { left: 6px; }
+#gallery-next { right: 6px; }
+.gallery-arrow:hover { color: var(--accent-blue); border-color: var(--accent-blue); }
+
+/* Zoom cursor states */
+#artwork-wrap.zoomed { cursor: zoom-out; }
+
+/* Image counter label */
+#gallery-counter {
+  position: absolute;
+  top: 6px; right: 8px;
+  font-family: var(--mono);
+  font-size: 8px;
+  color: var(--text-muted);
+  letter-spacing: 0.12em;
+  z-index: 10;
+  pointer-events: none;
+}
+
+#artwork-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: opacity 0.4s ease;
+}
+#artwork-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--text-muted);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+}
+#artwork-placeholder svg {
+  opacity: 0.3;
+}
+
+/* Cassette reels overlay */
+#cassette-overlay {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  display: flex;
+  gap: 6px;
+  opacity: 0.55;
+}
+.reel {
+  width: 28px; height: 28px;
+  border: 1px solid var(--accent-blue);
+  border-radius: 50%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.reel::before {
+  content: '';
+  width: 8px; height: 8px;
+  border: 1px solid var(--accent-blue);
+  border-radius: 50%;
+  background: var(--bg-inset);
+}
+.reel::after {
+  content: '';
+  position: absolute;
+  width: 100%; height: 100%;
+  border-radius: 50%;
+  border: 1px dashed var(--accent-blue);
+  opacity: 0.4;
+  transform: scale(0.8);
+}
+.reel.spinning {
+  animation: reelSpin 2s linear infinite;
+}
+.reel.spinning-slow {
+  animation: reelSpin 3.5s linear infinite;
+}
+@keyframes reelSpin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+
+/* --- CONTROLS MODULE --- */
+#controls-module {
+  grid-column: 1;
+  grid-row: 2;
+  min-width: 0;
+}
+#controls-inner {
+  padding: 10px 14px 14px;
+}
+
+/* Now Playing */
+#now-playing-section {
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line-muted);
+}
+#track-number-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text-muted);
+  letter-spacing: 0.2em;
+  margin-bottom: 2px;
+}
+#track-title-display {
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--accent-blue);
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#track-artist-display {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-secondary);
+  letter-spacing: 0.1em;
+  margin-top: 2px;
+}
+
+/* Progress Bar */
+#progress-section {
+  margin-bottom: 10px;
+}
+#progress-wrap {
+  position: relative;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+#progress-bg {
+  width: 100%;
+  height: 2px;
+  background: var(--line-muted);
+  position: relative;
+  border-radius: 1px;
+}
+#progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-blue), var(--accent-gold));
+  border-radius: 1px;
+  width: 0%;
+  transition: width 0.1s linear;
+  position: relative;
+}
+#progress-fill::after {
+  content: '';
+  position: absolute;
+  right: -3px; top: -3px;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--accent-gold);
+  border: 1px solid var(--bg-panel);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+#progress-wrap:hover #progress-fill::after { opacity: 1; }
+#time-display {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text-muted);
+  margin-top: 4px;
+  letter-spacing: 0.1em;
+}
+
+/* Loading bar */
+#loading-bar {
+  height: 2px;
+  background: var(--line-muted);
+  overflow: hidden;
+  margin-bottom: 6px;
+  display: none;
+}
+#loading-bar.active { display: block; }
+#loading-fill {
+  height: 100%;
+  width: 30%;
+  background: var(--accent-gold);
+  animation: loadingAnim 1.2s ease-in-out infinite;
+}
+@keyframes loadingAnim {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(400%); }
+}
+
+/* Transport Controls */
+#transport {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.ctrl-btn {
+  background: var(--bg-inset);
+  border: 1px solid var(--line-mid);
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+  font-family: var(--mono);
+  letter-spacing: 0.05em;
+  padding: 0;
+}
+.ctrl-btn:hover {
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+  box-shadow: 0 0 8px var(--accent-glow);
+}
+.ctrl-btn.active {
+  border-color: var(--accent-gold);
+  color: var(--accent-gold);
+}
+.ctrl-btn.large {
+  width: 48px; height: 48px;
+}
+.ctrl-btn.medium {
+  width: 36px; height: 36px;
+}
+.ctrl-btn.small {
+  width: 28px; height: 28px;
+  font-size: 10px;
+}
+.ctrl-btn svg { width: 16px; height: 16px; }
+.ctrl-btn.large svg { width: 20px; height: 20px; }
+.ctrl-btn.small svg { width: 12px; height: 12px; }
+
+/* Mode Controls */
+#mode-controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+.mode-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text-muted);
+  letter-spacing: 0.15em;
+}
+
+/* --- FERROFLUID VISUALIZER --- */
+#visualizer-module {
+  position: relative;
+  overflow: hidden;
+  background: var(--bg-inset);
+  border: 1px solid var(--line-muted);
+  border-radius: var(--radius);
+  display: block; /* Shown beside artwork */
+  min-height: 200px;
+}
+#viz-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 6px 10px 4px;
+  border-bottom: 1px solid var(--line-muted);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+#visualizer-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+#viz-toggle {
+  position: absolute;
+  top: 4px; right: 6px;
+  font-family: var(--mono);
+  font-size: 8px;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  letter-spacing: 0.1em;
+}
+#viz-toggle:hover { color: var(--accent-blue); }
+
+/* --- PLAYLIST MODULE --- */
+#playlist-module {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 120px);
+}
+#playlist-scroll {
+  overflow-y: auto;
+  flex: 1;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-mid) transparent;
+}
+#playlist-scroll::-webkit-scrollbar { width: 4px; }
+#playlist-scroll::-webkit-scrollbar-track { background: transparent; }
+#playlist-scroll::-webkit-scrollbar-thumb { background: var(--line-mid); border-radius: 2px; }
+
+.playlist-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--line-muted);
+  transition: background var(--transition);
+  position: relative;
+}
+.playlist-item:hover {
+  background: rgba(63,90,122,0.15);
+}
+.playlist-item.active {
+  background: rgba(111,168,200,0.08);
+  border-left: 2px solid var(--accent-gold);
+}
+.playlist-item.active .pl-num { color: var(--accent-gold); }
+.playlist-item.active .pl-title { color: var(--accent-blue); }
+.pl-num {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text-muted);
+  min-width: 18px;
+  padding-top: 1px;
+  letter-spacing: 0.05em;
+}
+.pl-info { flex: 1; overflow: hidden; }
+.pl-title {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+}
+.pl-artist {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text-muted);
+  margin-top: 1px;
+}
+.pl-playing-icon {
+  display: none;
+  align-items: center;
+  gap: 2px;
+  padding-top: 3px;
+}
+.playlist-item.active.playing .pl-playing-icon { display: flex; }
+.pl-bar {
+  width: 2px;
+  background: var(--accent-blue);
+  border-radius: 1px;
+  animation: barDance 0.8s ease-in-out infinite alternate;
+}
+.pl-bar:nth-child(2) { animation-delay: 0.2s; }
+.pl-bar:nth-child(3) { animation-delay: 0.4s; }
+@keyframes barDance {
+  from { height: 4px; }
+  to   { height: 12px; }
+}
+
+/* --- LYRICS / INFO PANEL --- */
+#info-module {
+  grid-column: 1;
+  grid-row: 3;
+}
+#info-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--line-muted);
+}
+.info-tab {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 6px 12px;
+  cursor: pointer;
+  border: none;
+  background: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: all var(--transition);
+}
+.info-tab:hover { color: var(--text-secondary); }
+.info-tab.active {
+  color: var(--accent-blue);
+  border-bottom-color: var(--accent-blue);
+}
+#info-content {
+  padding: 12px 14px;
+  min-height: 80px;
+  max-height: 160px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-mid) transparent;
+}
+#info-content::-webkit-scrollbar { width: 3px; }
+#info-content::-webkit-scrollbar-thumb { background: var(--line-mid); }
+#lyrics-text {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  white-space: pre-wrap;
+}
+.info-empty {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.12em;
+  font-style: italic;
+}
+#notes-text {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+/* --- FOOTER NAV --- */
+#footer-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0 4px;
+  border-top: 1px solid var(--line-muted);
+  margin-top: 12px;
+}
+.footer-btn {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: none;
+  border: 1px solid transparent;
+  padding: 4px 8px;
+  cursor: pointer;
+  border-radius: var(--radius);
+  transition: all var(--transition);
+}
+.footer-btn:hover {
+  color: var(--accent-blue);
+  border-color: var(--line-mid);
+}
+.footer-copy {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+}
+
+/* --- MODALS --- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(8,12,20,0.88);
+  z-index: 100;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.modal-overlay.open { display: flex; }
+.modal-box {
+  background: var(--bg-panel);
+  border: 1px solid var(--line-mid);
+  border-radius: var(--radius);
+  max-width: 560px;
+  width: 100%;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--line-muted);
+}
+.modal-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent-blue);
+}
+.modal-close {
+  background: none;
+  border: 1px solid var(--line-mid);
+  color: var(--text-muted);
+  cursor: pointer;
+  width: 24px; height: 24px;
+  border-radius: var(--radius);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  transition: all var(--transition);
+}
+.modal-close:hover { color: var(--accent-blue); border-color: var(--accent-blue); }
+.modal-body {
+  padding: 14px;
+  overflow-y: auto;
+  flex: 1;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-mid) transparent;
+}
+.modal-body::-webkit-scrollbar { width: 3px; }
+.modal-body::-webkit-scrollbar-thumb { background: var(--line-mid); }
+
+/* Credits */
+.credits-block {
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line-muted);
+}
+.credits-block:last-child { border-bottom: none; margin-bottom: 0; }
+.credits-section-label {
+  font-family: var(--mono);
+  font-size: 8px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--accent-gold);
+  margin-bottom: 6px;
+}
+.credits-line {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.8;
+}
+.credits-line strong {
+  color: var(--text-primary);
+}
+
+/* Gallery */
+#gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 8px;
+}
+.gallery-img-wrap {
+  aspect-ratio: 1;
+  background: var(--bg-inset);
+  border: 1px solid var(--line-muted);
+  overflow: hidden;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+.gallery-img-wrap img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+.gallery-img-wrap:hover img { transform: scale(1.04); }
+.gallery-empty {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.12em;
+  text-align: center;
+  padding: 24px 0;
+}
+
+/* --- ERROR STATE --- */
+#error-banner {
+  display: none;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--accent-gold);
+  letter-spacing: 0.12em;
+  padding: 6px 14px;
+  border-top: 1px solid rgba(200,168,111,0.2);
+  background: rgba(200,168,111,0.05);
+}
+#error-banner.visible { display: block; }
+
+/* --- RESPONSIVE --- */
+@media (max-width: 768px) {
+  #main-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto auto;
+  }
+  #artwork-module {
+    grid-column: 1;
+    grid-row: 1;
+    max-height: 280px;
+  }
+  #controls-module {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  #playlist-module {
+    grid-column: 1;
+    grid-row: 3;
+    max-height: 240px;
+  }
+  #info-module {
+    grid-column: 1;
+    grid-row: 4;
+  }
+  #header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  .header-meta { text-align: left; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reel, .reel.spinning, .reel.spinning-slow,
+  .trace-line, .pl-bar, #loading-fill {
+    animation: none;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     SIGNAL TRACE BACKGROUND ANIMATION
+     ============================================================ -->
+<div class="signal-trace" aria-hidden="true">
+  <svg viewBox="0 0 1200 800" preserveAspectRatio="none">
+    <path class="trace-line" d="M0,200 L200,200 L200,400 L500,400 L500,200 L800,200 L800,500 L1200,500"/>
+    <path class="trace-line" d="M0,600 L300,600 L300,300 L600,300 L600,600 L900,600 L900,150 L1200,150"/>
+    <path class="trace-line" d="M0,400 L400,400 L400,100 L700,100 L700,700 L1000,700 L1000,350 L1200,350"/>
+  </svg>
+</div>
+
+<!-- ============================================================
+     MAIN APP
+     ============================================================ -->
+<div id="app">
+
+  <!-- HEADER -->
+  <header id="header">
+    <div class="header-identity">
+      <div class="header-title">Lyraphilia Dreams — Covers</div>
+      <div class="header-subtitle">an L SUDO project</div>
+    </div>
+    <div class="header-meta">
+      <span class="blink"></span>SIGNAL ACTIVE<br>
+      <span id="header-clock">——:——</span>
+    </div>
+  </header>
+
+  <!-- MAIN GRID -->
+  <div id="main-grid">
+
+    <!-- TOP LEFT: ARTWORK + VISUALIZER -->
+    <div id="top-left">
+
+      <!-- ARTWORK MODULE -->
+      <div class="module" id="artwork-module">
+        <div class="module-label">
+          <span>INPUT / SOURCE</span>
+          <span class="module-label-accent" id="track-index-label">— / 12</span>
+        </div>
+        <div id="artwork-wrap" aria-label="Artwork gallery — swipe or use arrows to browse, double-tap to zoom">
+          <!-- Gallery strip (populated by JS) -->
+          <div id="gallery-strip"></div>
+
+          <!-- UI overlays -->
+          <button class="gallery-arrow" id="gallery-prev" aria-label="Previous image">‹</button>
+          <button class="gallery-arrow" id="gallery-next" aria-label="Next image">›</button>
+          <div id="gallery-dots"></div>
+          <div id="gallery-counter">1 / 1</div>
+
+          <!-- Cassette reels -->
+          <div id="cassette-overlay" aria-hidden="true">
+            <div class="reel" id="reel-left"></div>
+            <div class="reel" id="reel-right"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FERROFLUID VISUALIZER — beside artwork -->
+      <div class="module" id="visualizer-module" aria-hidden="true">
+        <div id="viz-label">
+          <span>SIGNAL / VISUALIZER</span>
+          <button id="viz-toggle" style="background:none;border:none;cursor:pointer;font-family:var(--mono);font-size:8px;color:var(--text-muted);letter-spacing:0.1em;">▣</button>
+        </div>
+        <canvas id="visualizer-canvas" style="width:100%;height:calc(100% - 28px);display:block;"></canvas>
+      </div>
+
+    </div><!-- /top-left -->
+
+    <!-- CONTROLS MODULE -->
+    <div class="module" id="controls-module">
+      <div class="module-label">
+        <span>TRANSPORT / PLAYBACK</span>
+        <span class="module-label-accent" id="playstate-label">STANDBY</span>
+      </div>
+      <div id="controls-inner">
+
+        <!-- Now Playing -->
+        <div id="now-playing-section">
+          <div id="track-number-label">TRK ——</div>
+          <div id="track-title-display">SELECT A TRACK</div>
+          <div id="track-artist-display">——</div>
+        </div>
+
+        <!-- Loading Bar -->
+        <div id="loading-bar"><div id="loading-fill"></div></div>
+
+        <!-- Progress Bar -->
+        <div id="progress-section">
+          <div id="progress-wrap" role="slider" aria-label="Track progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0">
+            <div id="progress-bg">
+              <div id="progress-fill"></div>
+            </div>
+          </div>
+          <div id="time-display">
+            <span id="time-current">0:00</span>
+            <span id="time-total">0:00</span>
+          </div>
+        </div>
+
+        <!-- Transport Buttons -->
+        <div id="transport">
+          <button class="ctrl-btn small" id="btn-prev" aria-label="Previous track">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg>
+          </button>
+          <button class="ctrl-btn large" id="btn-play" aria-label="Play">
+            <svg id="icon-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            <svg id="icon-pause" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+          </button>
+          <button class="ctrl-btn small" id="btn-next" aria-label="Next track">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zm2-8.14 5.14 2.14L8 14.14V9.86zM16 6h2v12h-2z"/></svg>
+          </button>
+        </div>
+
+        <!-- Mode Controls -->
+        <div id="mode-controls">
+          <span class="mode-label">MODE</span>
+          <button class="ctrl-btn small" id="btn-shuffle" aria-label="Toggle shuffle" title="Shuffle">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10.59 9.17 5.41 4 4 5.41l5.17 5.17zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4zm.33 9.41-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04z"/></svg>
+          </button>
+          <button class="ctrl-btn small" id="btn-loop" aria-label="Toggle loop" title="Loop">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 7h10v3l4-4-4-4v3H5v6h2zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2z"/></svg>
+          </button>
+          <button class="ctrl-btn small" id="btn-viz" aria-label="Toggle visualizer" title="Visualizer" style="display:none">VIZ</button>
+        </div>
+
+        <!-- Error Banner -->
+        <div id="error-banner">⚠ SIGNAL LOST — TRACK FAILED TO LOAD</div>
+
+      </div>
+
+    </div>
+
+    <!-- PLAYLIST MODULE -->
+    <div class="module" id="playlist-module">
+      <div class="module-label">
+        <span>SIGNAL QUEUE / TRACKS</span>
+        <span class="module-label-accent">12 ENTRIES</span>
+      </div>
+      <div id="playlist-scroll">
+        <div id="playlist-list" role="listbox" aria-label="Track list"></div>
+      </div>
+    </div>
+
+    <!-- LYRICS / INFO MODULE -->
+    <div class="module" id="info-module">
+      <div id="info-tabs">
+        <button class="info-tab active" data-tab="lyrics">Lyrics</button>
+        <button class="info-tab" data-tab="notes">Notes</button>
+      </div>
+      <div id="info-content">
+        <div id="lyrics-panel">
+          <div id="lyrics-text" class="info-empty">— NO TRACK SELECTED —</div>
+        </div>
+        <div id="notes-panel" style="display:none">
+          <div id="notes-text" class="info-empty">— NO NOTES —</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main-grid -->
+
+  <!-- FOOTER NAV -->
+  <footer id="footer-nav">
+    <div style="display:flex;gap:6px">
+      <button class="footer-btn" id="btn-credits">Credits</button>
+      <button class="footer-btn" id="btn-gallery">Gallery</button>
+    </div>
+    <div class="footer-copy">LYRAPHILIA DREAMS © L SUDO</div>
+  </footer>
+
+</div><!-- /app -->
+
+<!-- ============================================================
+     CREDITS MODAL
+     ============================================================ -->
+<div class="modal-overlay" id="credits-modal" role="dialog" aria-modal="true" aria-label="Credits">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title">Credits / Liner Notes</span>
+      <button class="modal-close" data-close="credits-modal" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body" id="credits-body">
+      <!-- Credits are rendered by JS from CREDITS config below -->
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     GALLERY MODAL
+     ============================================================ -->
+<div class="modal-overlay" id="gallery-modal" role="dialog" aria-modal="true" aria-label="Gallery">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title">Image Archive / Gallery</span>
+      <button class="modal-close" data-close="gallery-modal" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="gallery-grid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     HIDDEN AUDIO ELEMENT
+     ============================================================ -->
+<audio id="audio-player" preload="none"></audio>
+
+<script>
+/* ============================================================
+   CONFIG / TRACK DATA
+   ============================================================
+   HOW TO USE:
+   - Replace each track's `src` with the real audio file path
+     e.g. for USB/offline:   src: 'audio/01.wav'
+          for hosted/Vercel: src: 'https://your-cdn.com/audio/01.wav'
+   - Replace `artwork` with path to per-track image
+     e.g. artwork: 'artwork/track01.jpg'
+     Leave as '' to use the default cover.
+   - Fill in `lyrics` as a plain string (use \n for line breaks)
+   - `notes` is optional liner note text per track
+   - `hidden: true` flags a track for future special-features build
+   ============================================================ */
+
+const TRACKS = [
+  {
+    num: 1,
+    title: "Are You Happy Now?",
+    artist: "Lyraphilia Dreams",
+    src: "https://pub-b333ae075b3b4a25901ab0700b4271c8.r2.dev/01.wav",           // ← REPLACE with real path
+    artwork: "", // ← REPLACE or leave ''
+    lyrics: "",                     // ← ADD lyrics here
+    notes: "",                      // ← ADD liner notes here
+    hidden: false,
+    duration: ""
+  },
+  {
+    num: 2,
+    title: "Regulate (feat. Defence HQ 25)",
+    artist: "Lyraphilia Dreams – Radio Edit",
+    src: "https://pub-b333ae075b3b4a25901ab0700b4271c8.r2.dev/02.wav",
+    artwork: "",
+    lyrics: "",
+    notes: "",
+    hidden: false,
+    duration: ""
+  },
+  {
+    num: 3,
+    title: "Black Rain (feat. Lyraphilia)",
+    artist: "Lyraphilia Dreams",
+    src: "https://pub-b333ae075b3b4a25901ab0700b4271c8.r2.dev/03.wav",
+    artwork: "",
+    lyrics: "",
+    notes: "",
+    hidden: false,
+    duration: ""
+  },
+  {
+    num: 4,
+    title: "Manuscrit trouvé… (feat. R970)",
+    artist: "Lyraphilia Dreams",
+    src: "https://pub-b333ae075b3b4a25901ab0700b4271c8.r2.dev/04.wav",
+    artwork: "",
+    lyrics: "",
+    notes: "",
+    hidden: false,
+    duration: ""
+  },
+  {
+    num: 5,
+    title: "Rotten Brain (feat. yolkhead///diskrot)",
+    artist: "Lyraphilia Dreams",
+    src: "https://pub-b333ae075b3b4a25901ab0700b4271c8.r2.dev/05.wav",
+    artwork: "",
+    lyrics: "",
+    notes: "",
+    hidden: false,
+    duration: ""
+  },
+  {
+    num: 6,
+    title: "LOADED GUN COMPLEX (feat. L SUDO)",
+    artist: "Lyraphilia Dreams",
+    src: "https://pub-b333ae075b3b4a25901ab0700b4271c8.r2.dev/06.wav",
+    artwork: "",
+    lyrics: "",
+    notes: "",
+    hidden: false,
+    duration: ""
+  },
+  {
+    num: 7,
+    title: "Put Out My Fire (feat. gnomestones)",
+    artist: "Lyraphilia Dreams",
+    src: "https://pub-b333ae075b3b4a25901ab0700b4271c8.r2.dev/07.wav",
+    artwork: "",
+    lyrics: "",
+    notes: "",
+    hidden: false,
+    duration: ""
+  },
+  {
+    num: 8,
+    title: "Fear Not (s1 ft.me) (feat. Saffryn)",
+    artist: "Lyraphilia Dreams",
+    src: "https://pub-b333ae075b3b4a25901ab0700b4271c8.r2.dev/08.wav",
+    artwork: "",
+    lyrics: "",
+    notes: "",
+    hidden: false,
+    duration: ""
+  },
+  {
+    num: 9,
+    title: "\"Shadows twist in my mind\" (feat. Lyraphilia)",
+    artist: "Lyraphilia Dreams",
+    src: "https://pub-b333ae075b3b4a25901ab0700b4271c8.r2.dev/09.wav",
+    artwork: "",
+    lyrics: "",
+    notes: "",
+    hidden: false,
+    duration: ""
+  },
+  {
+    num: 10,
+    title: "Perfect Place (feat. ilangelo)",
+    artist: "Lyraphilia Dreams",
+    src: "https://pub-b333ae075b3b4a25901ab0700b4271c8.r2.dev/10.wav",
+    artwork: "",
+    lyrics: "",
+    notes: "",
+    hidden: false,
+    duration: ""
+  },
+  {
+    num: 11,
+    title: "260121_2Pgg4 (UnrelentingMusicTherapists1520)",
+    artist: "Lyraphilia Dreams",
+    src: "https://pub-b333ae075b3b4a25901ab0700b4271c8.r2.dev/11.wav",
+    artwork: "",
+    lyrics: "",
+    notes: "",
+    hidden: false,
+    duration: ""
+  },
+  {
+    num: 12,
+    title: "Cycle (feat. GuestMusic82)",
+    artist: "Lyraphilia Dreams",
+    src: "https://pub-b333ae075b3b4a25901ab0700b4271c8.r2.dev/12.wav",
+    artwork: "",
+    lyrics: "",
+    notes: "",
+    hidden: false,
+    duration: ""
+  }
+];
+
+/* ============================================================
+   CREDITS CONFIG
+   Edit this object to update the credits modal.
+   ============================================================ */
+const CREDITS = {
+  project: {
+    label: "Project",
+    lines: [
+      "<strong>Lyraphilia Dreams – Covers</strong>",
+      "an L SUDO project"
+    ]
+  },
+  artwork: {
+    label: "Cover Art",
+    lines: [
+      "— add credit here —"   // ← REPLACE
+    ]
+  },
+  build: {
+    label: "Web Player",
+    lines: [
+      "Built by L SUDO",
+      "Single-file HTML/CSS/JS"
+    ]
+  },
+  thanks: {
+    label: "Special Thanks",
+    lines: [
+      "— add names here —"   // ← REPLACE
+    ]
+  },
+  legal: {
+    label: "Listening Note",
+    lines: [
+      "This player is for private listening only.",
+      "Please do not redistribute."
+    ]
+  }
+};
+
+/* ============================================================
+   GALLERY CONFIG
+   Add image paths here to populate the gallery modal.
+   Leave empty array [] to show 'no images' state.
+   ============================================================ */
+/* ============================================================
+   ARTWORK GALLERY
+   Add images here to make them browsable in the artwork panel.
+   Swipe left/right to browse, pinch or double-tap to zoom.
+   ============================================================ */
+const GALLERY_IMAGES = [
+  { src: 'artwork/LYRAPHILIA_COVER_ART.png',   alt: 'Lyraphilia Dreams – Cover Art' },
+  { src: 'artwork/LYRAPHILIA_ORGANIC.png',      alt: 'Lyraphilia Dreams – Organic' },
+  { src: 'artwork/LYRAPHILIA_ALTERNATIVE.png',  alt: 'Lyraphilia Dreams – Alternative' },
+  // ← Add more entries here: { src: 'artwork/filename.jpg', alt: 'Description' }
+];
+
+/* Default cover image — shown when no per-track artwork is set */
+const DEFAULT_COVER = "artwork/LYRAPHILIA_COVER_ART.png"; // ← default cover
+
+/* ============================================================
+   SPECIAL FEATURES FLAG
+   Set enableSpecialFeatures: true to reveal hidden tracks,
+   alternate artwork, bonus content, etc. in a future build.
+   ============================================================ */
+const CONFIG = {
+  enableSpecialFeatures: false,  // ← toggle for hidden-version branch
+  enableVisualizer: true,       // ← set true to enable ferrofluid visualizer
+  autoplayNext: true,            // ← autoplay next track when one ends
+  defaultLoop: false             // ← start with loop enabled
+};
+
+/* ============================================================
+   DOM REFERENCES
+   ============================================================ */
+const audio          = document.getElementById('audio-player');
+// artworkImg and artworkPH replaced by gallery system
+const trackNumLabel  = document.getElementById('track-number-label');
+const trackTitle     = document.getElementById('track-title-display');
+const trackArtist    = document.getElementById('track-artist-display');
+const trackIndex     = document.getElementById('track-index-label');
+const playstateLabel = document.getElementById('playstate-label');
+const progressWrap   = document.getElementById('progress-wrap');
+const progressFill   = document.getElementById('progress-fill');
+const timeCurrent    = document.getElementById('time-current');
+const timeTotal      = document.getElementById('time-total');
+const loadingBar     = document.getElementById('loading-bar');
+const btnPlay        = document.getElementById('btn-play');
+const iconPlay       = document.getElementById('icon-play');
+const iconPause      = document.getElementById('icon-pause');
+const btnPrev        = document.getElementById('btn-prev');
+const btnNext        = document.getElementById('btn-next');
+const btnShuffle     = document.getElementById('btn-shuffle');
+const btnLoop        = document.getElementById('btn-loop');
+const btnViz         = document.getElementById('btn-viz');
+const playlistList   = document.getElementById('playlist-list');
+const lyricsText     = document.getElementById('lyrics-text');
+const notesText      = document.getElementById('notes-text');
+const errorBanner    = document.getElementById('error-banner');
+const reelLeft       = document.getElementById('reel-left');
+const reelRight      = document.getElementById('reel-right');
+const headerClock    = document.getElementById('header-clock');
+const vizModule      = document.getElementById('visualizer-module');
+const vizCanvas      = document.getElementById('visualizer-canvas');
+const vizToggleBtn   = document.getElementById('viz-toggle');
+
+/* ============================================================
+   AUDIO STATE
+   ============================================================ */
+let currentIndex   = -1;
+let isPlaying      = false;
+let isShuffle      = false;
+let isLoop         = CONFIG.defaultLoop;
+let isVizEnabled   = CONFIG.enableVisualizer;
+let shuffleQueue   = [];
+let isDragging     = false;
+let audioCtx       = null;
+let analyser       = null;
+let sourceNode     = null;
+let vizAnimFrame   = null;
+
+/* Filter hidden tracks if special features disabled */
+const activeTracks = TRACKS.filter(t => !t.hidden || CONFIG.enableSpecialFeatures);
+
+/* ============================================================
+   UTILITY FUNCTIONS
+   ============================================================ */
+function formatTime(secs) {
+  if (isNaN(secs) || !isFinite(secs)) return '0:00';
+  const m = Math.floor(secs / 60);
+  const s = Math.floor(secs % 60);
+  return `${m}:${s.toString().padStart(2, '0')}`;
+}
+
+function buildShuffleQueue() {
+  shuffleQueue = [...activeTracks.map((_, i) => i)];
+  for (let i = shuffleQueue.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffleQueue[i], shuffleQueue[j]] = [shuffleQueue[j], shuffleQueue[i]];
+  }
+}
+
+function getNextIndex() {
+  if (isShuffle) {
+    if (!shuffleQueue.length) buildShuffleQueue();
+    return shuffleQueue.pop();
+  }
+  const next = currentIndex + 1;
+  if (next >= activeTracks.length) return isLoop ? 0 : -1;
+  return next;
+}
+
+function getPrevIndex() {
+  if (audio.currentTime > 3) return currentIndex;
+  const prev = currentIndex - 1;
+  return prev < 0 ? (isLoop ? activeTracks.length - 1 : 0) : prev;
+}
+
+/* ============================================================
+   RENDER FUNCTIONS
+   ============================================================ */
+
+/* Build playlist */
+function renderPlaylist() {
+  playlistList.innerHTML = '';
+  activeTracks.forEach((track, i) => {
+    const item = document.createElement('div');
+    item.className = 'playlist-item';
+    item.setAttribute('role', 'option');
+    item.setAttribute('aria-label', `Track ${track.num}: ${track.title}`);
+    item.dataset.index = i;
+    item.innerHTML = `
+      <span class="pl-num">${String(track.num).padStart(2, '0')}</span>
+      <div class="pl-info">
+        <div class="pl-title">${track.title}</div>
+        <div class="pl-artist">${track.artist}</div>
+      </div>
+      <div class="pl-playing-icon" aria-hidden="true">
+        <div class="pl-bar" style="height:6px"></div>
+        <div class="pl-bar" style="height:10px"></div>
+        <div class="pl-bar" style="height:4px"></div>
+      </div>
+    `;
+    item.addEventListener('click', () => loadTrack(i, true));
+    playlistList.appendChild(item);
+  });
+}
+
+/* Update active track in playlist */
+function updatePlaylistActive() {
+  document.querySelectorAll('.playlist-item').forEach((item, i) => {
+    item.classList.toggle('active', i === currentIndex);
+    item.classList.toggle('playing', i === currentIndex && isPlaying);
+    if (i === currentIndex) {
+      item.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+  });
+}
+
+/* Update now-playing header */
+function updateNowPlaying() {
+  if (currentIndex < 0) return;
+  const t = activeTracks[currentIndex];
+  trackNumLabel.textContent = `TRK ${String(t.num).padStart(2, '0')}`;
+  trackTitle.textContent    = t.title;
+  trackArtist.textContent   = t.artist;
+  trackIndex.textContent    = `${t.num} / ${activeTracks.length}`;
+}
+
+/* ============================================================
+   GALLERY VIEWER — swipe, pinch zoom, double-tap
+   ============================================================ */
+
+let galleryIndex  = 0;   // current visible slide
+let zoomScale     = 1;   // current zoom level
+let zoomOriginX   = 0;
+let zoomOriginY   = 0;
+let panX          = 0;
+let panY          = 0;
+let isDraggingGallery = false;
+let dragStartX    = 0;
+let dragStartY    = 0;
+let panStartX     = 0;
+let panStartY     = 0;
+let lastTapTime   = 0;
+let pinchStartDist = 0;
+let pinchStartScale = 1;
+
+const artworkWrap  = document.getElementById('artwork-wrap');
+const galleryStrip = document.getElementById('gallery-strip');
+const galleryDots  = document.getElementById('gallery-dots');
+const galleryCounter = document.getElementById('gallery-counter');
+const galleryPrev  = document.getElementById('gallery-prev');
+const galleryNext  = document.getElementById('gallery-next');
+
+/* Build gallery slides from GALLERY_IMAGES */
+function buildGallery() {
+  galleryStrip.innerHTML = '';
+  galleryDots.innerHTML  = '';
+
+  const images = GALLERY_IMAGES.length ? GALLERY_IMAGES : [{ src: DEFAULT_COVER, alt: 'Cover' }];
+
+  images.forEach((img, i) => {
+    const slide = document.createElement('div');
+    slide.className = 'gallery-slide';
+    const el = document.createElement('img');
+    el.src = img.src;
+    el.alt = img.alt || '';
+    el.draggable = false;
+    slide.appendChild(el);
+    galleryStrip.appendChild(slide);
+
+    const dot = document.createElement('div');
+    dot.className = 'gallery-dot' + (i === 0 ? ' active' : '');
+    galleryDots.appendChild(dot);
+  });
+
+  galleryCounter.textContent = `1 / ${images.length}`;
+  goToSlide(0, false);
+}
+
+function goToSlide(index, animate) {
+  const images = GALLERY_IMAGES.length ? GALLERY_IMAGES : [{ src: DEFAULT_COVER }];
+  const count  = images.length;
+  galleryIndex = Math.max(0, Math.min(index, count - 1));
+
+  resetZoom();
+
+  if (animate === false) {
+    galleryStrip.style.transition = 'none';
+  } else {
+    galleryStrip.style.transition = 'transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94)';
+  }
+  galleryStrip.style.transform = `translateX(-${galleryIndex * 100}%)`;
+
+  document.querySelectorAll('.gallery-dot').forEach((d, i) => {
+    d.classList.toggle('active', i === galleryIndex);
+  });
+  galleryCounter.textContent = `${galleryIndex + 1} / ${count}`;
+}
+
+function resetZoom() {
+  zoomScale = 1; panX = 0; panY = 0;
+  applyZoom();
+  artworkWrap.classList.remove('zoomed');
+}
+
+function applyZoom() {
+  const slide = galleryStrip.children[galleryIndex];
+  if (!slide) return;
+  const img = slide.querySelector('img');
+  if (!img) return;
+  img.style.transform = `scale(${zoomScale}) translate(${panX / zoomScale}px, ${panY / zoomScale}px)`;
+}
+
+/* Arrow buttons */
+galleryPrev.addEventListener('click', (e) => { e.stopPropagation(); goToSlide(galleryIndex - 1, true); });
+galleryNext.addEventListener('click', (e) => { e.stopPropagation(); goToSlide(galleryIndex + 1, true); });
+
+/* ---- TOUCH EVENTS ---- */
+let touchStartX = 0, touchStartY = 0;
+let touchMoved  = false;
+
+artworkWrap.addEventListener('touchstart', (e) => {
+  if (e.touches.length === 1) {
+    touchStartX  = e.touches[0].clientX;
+    touchStartY  = e.touches[0].clientY;
+    touchMoved   = false;
+    panStartX    = panX;
+    panStartY    = panY;
+
+    /* Double-tap to zoom */
+    const now = Date.now();
+    if (now - lastTapTime < 300) {
+      e.preventDefault();
+      if (zoomScale > 1) {
+        resetZoom();
+      } else {
+        const rect = artworkWrap.getBoundingClientRect();
+        zoomOriginX = e.touches[0].clientX - rect.left;
+        zoomOriginY = e.touches[0].clientY - rect.top;
+        zoomScale   = 2.5;
+        applyZoom();
+        artworkWrap.classList.add('zoomed');
+      }
+    }
+    lastTapTime = now;
+
+  } else if (e.touches.length === 2) {
+    /* Pinch start */
+    e.preventDefault();
+    pinchStartDist  = Math.hypot(
+      e.touches[0].clientX - e.touches[1].clientX,
+      e.touches[0].clientY - e.touches[1].clientY
+    );
+    pinchStartScale = zoomScale;
+  }
+}, { passive: false });
+
+artworkWrap.addEventListener('touchmove', (e) => {
+  if (e.touches.length === 2) {
+    /* Pinch zoom */
+    e.preventDefault();
+    const dist = Math.hypot(
+      e.touches[0].clientX - e.touches[1].clientX,
+      e.touches[0].clientY - e.touches[1].clientY
+    );
+    zoomScale = Math.min(Math.max(pinchStartScale * (dist / pinchStartDist), 1), 4);
+    if (zoomScale > 1) artworkWrap.classList.add('zoomed');
+    else artworkWrap.classList.remove('zoomed');
+    applyZoom();
+    return;
+  }
+
+  if (e.touches.length === 1) {
+    const dx = e.touches[0].clientX - touchStartX;
+    const dy = e.touches[0].clientY - touchStartY;
+    if (Math.abs(dx) > 4 || Math.abs(dy) > 4) touchMoved = true;
+
+    if (zoomScale > 1) {
+      /* Pan when zoomed */
+      e.preventDefault();
+      panX = panStartX + dx;
+      panY = panStartY + dy;
+      applyZoom();
+    }
+  }
+}, { passive: false });
+
+artworkWrap.addEventListener('touchend', (e) => {
+  if (e.changedTouches.length === 1 && touchMoved && zoomScale <= 1) {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 40) {
+      goToSlide(dx < 0 ? galleryIndex + 1 : galleryIndex - 1, true);
+    }
+  }
+  if (e.touches.length < 2 && zoomScale <= 1) resetZoom();
+}, { passive: true });
+
+/* ---- MOUSE EVENTS (desktop swipe + drag-to-pan) ---- */
+artworkWrap.addEventListener('mousedown', (e) => {
+  if (e.button !== 0) return;
+  isDraggingGallery = true;
+  dragStartX = e.clientX;
+  dragStartY = e.clientY;
+  panStartX  = panX;
+  panStartY  = panY;
+  touchMoved = false;
+  e.preventDefault();
+});
+
+document.addEventListener('mousemove', (e) => {
+  if (!isDraggingGallery) return;
+  const dx = e.clientX - dragStartX;
+  const dy = e.clientY - dragStartY;
+  if (Math.abs(dx) > 4 || Math.abs(dy) > 4) touchMoved = true;
+  if (zoomScale > 1) {
+    panX = panStartX + dx;
+    panY = panStartY + dy;
+    applyZoom();
+  }
+});
+
+document.addEventListener('mouseup', (e) => {
+  if (!isDraggingGallery) return;
+  isDraggingGallery = false;
+  const dx = e.clientX - dragStartX;
+  if (touchMoved && zoomScale <= 1 && Math.abs(dx) > 40) {
+    goToSlide(dx < 0 ? galleryIndex + 1 : galleryIndex - 1, true);
+  }
+});
+
+/* Double-click to zoom on desktop */
+artworkWrap.addEventListener('dblclick', (e) => {
+  if (zoomScale > 1) {
+    resetZoom();
+  } else {
+    zoomScale = 2.5;
+    applyZoom();
+    artworkWrap.classList.add('zoomed');
+  }
+});
+
+/* Scroll wheel zoom */
+artworkWrap.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  zoomScale = Math.min(Math.max(zoomScale - e.deltaY * 0.002, 1), 4);
+  if (zoomScale <= 1) resetZoom();
+  else {
+    artworkWrap.classList.add('zoomed');
+    applyZoom();
+  }
+}, { passive: false });
+
+/* Update artwork display — resets to first slide or track-specific if set */
+function updateArtwork() {
+  const t = currentIndex >= 0 ? activeTracks[currentIndex] : null;
+  /* If the track has specific artwork, insert/prepend it as slide 0 */
+  const trackSrc = t && t.artwork ? t.artwork : null;
+
+  let images = GALLERY_IMAGES.length ? [...GALLERY_IMAGES] : [{ src: DEFAULT_COVER, alt: 'Cover' }];
+
+  if (trackSrc && !images.find(i => i.src === trackSrc)) {
+    images = [{ src: trackSrc, alt: t.title }, ...images];
+  }
+
+  /* Rebuild only if needed */
+  buildGallery();
+  goToSlide(0, false);
+}
+
+/* Update lyrics / notes panel */
+function updateInfoPanel() {
+  if (currentIndex < 0) return;
+  const t = activeTracks[currentIndex];
+
+  if (t.lyrics && t.lyrics.trim()) {
+    lyricsText.className = '';
+    lyricsText.textContent = t.lyrics;
+  } else {
+    lyricsText.className = 'info-empty';
+    lyricsText.textContent = '— LYRICS NOT AVAILABLE FOR THIS TRACK —';
+  }
+
+  if (t.notes && t.notes.trim()) {
+    notesText.className = '';
+    notesText.textContent = t.notes;
+  } else {
+    notesText.className = 'info-empty';
+    notesText.textContent = '— NO NOTES FOR THIS TRACK —';
+  }
+}
+
+/* Update play/pause button icons */
+function updatePlayUI() {
+  iconPlay.style.display  = isPlaying ? 'none' : 'block';
+  iconPause.style.display = isPlaying ? 'block' : 'none';
+  playstateLabel.textContent = isPlaying ? 'PLAYING' : 'PAUSED';
+  updatePlaylistActive();
+
+  if (isPlaying) {
+    reelLeft.classList.add('spinning');
+    reelRight.classList.add('spinning-slow');
+  } else {
+    reelLeft.classList.remove('spinning');
+    reelRight.classList.remove('spinning-slow');
+  }
+}
+
+/* Update progress bar */
+function updateProgress() {
+  if (audio.duration && !isDragging) {
+    const pct = (audio.currentTime / audio.duration) * 100;
+    progressFill.style.width = pct + '%';
+    progressWrap.setAttribute('aria-valuenow', Math.round(pct));
+    timeCurrent.textContent  = formatTime(audio.currentTime);
+    timeTotal.textContent    = formatTime(audio.duration);
+  }
+}
+
+/* Render credits modal */
+function renderCredits() {
+  const body = document.getElementById('credits-body');
+  body.innerHTML = Object.values(CREDITS).map(section => `
+    <div class="credits-block">
+      <div class="credits-section-label">${section.label}</div>
+      ${section.lines.map(l => `<div class="credits-line">${l}</div>`).join('')}
+    </div>
+  `).join('');
+}
+
+/* Render gallery modal */
+function renderGallery() {
+  const grid = document.getElementById('gallery-grid');
+  if (!GALLERY_IMAGES.length) {
+    grid.innerHTML = '<div class="gallery-empty">— NO IMAGES IN ARCHIVE —</div>';
+    return;
+  }
+  grid.innerHTML = GALLERY_IMAGES.map(img => `
+    <div class="gallery-img-wrap">
+      <img src="${img.src}" alt="${img.alt || 'Gallery image'}" loading="lazy">
+    </div>
+  `).join('');
+}
+
+/* ============================================================
+   PLAYER CONTROLS
+   ============================================================ */
+
+function loadTrack(index, autoplay) {
+  if (index < 0 || index >= activeTracks.length) return;
+  currentIndex = index;
+  const t = activeTracks[currentIndex];
+
+  /* Reset UI */
+  errorBanner.classList.remove('visible');
+  progressFill.style.width = '0%';
+  timeCurrent.textContent  = '0:00';
+  timeTotal.textContent    = '0:00';
+
+  /* Show loading state */
+  loadingBar.classList.add('active');
+  playstateLabel.textContent = 'LOADING…';
+
+  /* Swap audio source */
+  audio.pause();
+  audio.src = t.src;
+  audio.load();
+
+  updateNowPlaying();
+  updateArtwork();
+  updateInfoPanel();
+  updatePlaylistActive();
+
+  if (autoplay) {
+    audio.play().then(() => {
+      isPlaying = true;
+      updatePlayUI();
+      loadingBar.classList.remove('active');
+      initVisualizer();
+    }).catch(err => {
+      console.warn('Autoplay blocked or error:', err);
+      isPlaying = false;
+      updatePlayUI();
+      loadingBar.classList.remove('active');
+    });
+  } else {
+    isPlaying = false;
+    updatePlayUI();
+  }
+}
+
+function togglePlay() {
+  if (currentIndex < 0) {
+    loadTrack(0, true);
+    return;
+  }
+  if (isPlaying) {
+    audio.pause();
+    isPlaying = false;
+  } else {
+    audio.play().then(() => {
+      isPlaying = true;
+      initVisualizer();
+    }).catch(() => {});
+  }
+  updatePlayUI();
+}
+
+function prevTrack() {
+  loadTrack(getPrevIndex(), isPlaying);
+}
+
+function nextTrack() {
+  const next = getNextIndex();
+  if (next === -1) {
+    isPlaying = false;
+    updatePlayUI();
+    return;
+  }
+  loadTrack(next, isPlaying || CONFIG.autoplayNext);
+}
+
+/* ============================================================
+   FERROFLUID VISUALIZER
+   Scaffolded, disabled by default.
+   Set CONFIG.enableVisualizer = true and
+   #visualizer-module display to 'block' to activate.
+   ============================================================ */
+
+function initVisualizer() {
+  if (!isVizEnabled) return;
+  if (!window.AudioContext && !window.webkitAudioContext) return;
+
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    analyser  = audioCtx.createAnalyser();
+    analyser.fftSize = 128;
+    sourceNode = audioCtx.createMediaElementSource(audio);
+    sourceNode.connect(analyser);
+    analyser.connect(audioCtx.destination);
+  }
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  drawVisualizer();
+}
+
+function drawVisualizer() {
+  if (!isVizEnabled || !analyser) return;
+  vizAnimFrame = requestAnimationFrame(drawVisualizer);
+
+  const bufferLen = analyser.frequencyBinCount;
+  const dataArray = new Uint8Array(bufferLen);
+  analyser.getByteFrequencyData(dataArray);
+
+  const W = vizCanvas.width  = vizCanvas.offsetWidth;
+  const H = vizCanvas.height = vizCanvas.offsetHeight;
+  const ctx = vizCanvas.getContext('2d');
+
+  /* Dark fade trail for smooth motion */
+  ctx.fillStyle = 'rgba(8,12,20,0.18)';
+  ctx.fillRect(0, 0, W, H);
+
+  /* Ferrofluid blob — centred, fills the panel */
+  const cx = W / 2, cy = H / 2;
+  const baseR = Math.min(W, H) * 0.32;
+  const points = 128;
+
+  ctx.beginPath();
+  for (let i = 0; i <= points; i++) {
+    const angle = (i / points) * Math.PI * 2 - Math.PI / 2;
+    const idx   = Math.floor((i / points) * bufferLen);
+    const val   = dataArray[idx] / 255;
+    const spike = val * baseR * 0.85;
+    /* Smooth the spike with neighbour blend */
+    const prev  = dataArray[Math.max(idx - 1, 0)] / 255;
+    const next  = dataArray[Math.min(idx + 1, bufferLen - 1)] / 255;
+    const smooth = (prev + val + next) / 3;
+    const r = baseR + smooth * baseR * 0.85;
+    const x = cx + Math.cos(angle) * r;
+    const y = cy + Math.sin(angle) * r;
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  }
+  ctx.closePath();
+
+  /* Glow fill */
+  const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, baseR * 1.6);
+  grad.addColorStop(0,   'rgba(111,168,200,0.55)');
+  grad.addColorStop(0.5, 'rgba(63,90,122,0.3)');
+  grad.addColorStop(1,   'rgba(200,168,111,0.05)');
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  /* Edge glow stroke */
+  ctx.strokeStyle = 'rgba(111,168,200,0.5)';
+  ctx.lineWidth = 1.5;
+  ctx.shadowColor = 'rgba(111,168,200,0.6)';
+  ctx.shadowBlur = 8;
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  /* Inner core dot */
+  const avgVol = dataArray.reduce((a,b) => a+b, 0) / bufferLen / 255;
+  ctx.beginPath();
+  ctx.arc(cx, cy, 4 + avgVol * 12, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(200,168,111,0.6)';
+  ctx.fill();
+}
+
+function toggleVisualizer() {
+  isVizEnabled = !isVizEnabled;
+  if (isVizEnabled) {
+    vizModule.style.display = 'block';
+    btnViz.classList.add('active');
+    if (isPlaying) initVisualizer();
+  } else {
+    vizModule.style.display = 'none';
+    btnViz.classList.remove('active');
+    if (vizAnimFrame) cancelAnimationFrame(vizAnimFrame);
+  }
+}
+
+/* ============================================================
+   EVENT LISTENERS
+   ============================================================ */
+
+/* Transport */
+btnPlay.addEventListener('click', togglePlay);
+btnPrev.addEventListener('click', prevTrack);
+btnNext.addEventListener('click', nextTrack);
+
+/* Shuffle */
+btnShuffle.addEventListener('click', () => {
+  isShuffle = !isShuffle;
+  btnShuffle.classList.toggle('active', isShuffle);
+  if (isShuffle) buildShuffleQueue();
+});
+
+/* Loop */
+btnLoop.addEventListener('click', () => {
+  isLoop = !isLoop;
+  btnLoop.classList.toggle('active', isLoop);
+});
+
+/* Visualizer toggle (button in footer) */
+btnViz.addEventListener('click', toggleVisualizer);
+vizToggleBtn.addEventListener('click', toggleVisualizer);
+
+/* Expose viz button if enabled */
+if (CONFIG.enableVisualizer) {
+  btnViz.style.display = 'flex';
+  vizModule.style.display = 'block';
+  isVizEnabled = true;
+}
+
+/* Audio events */
+audio.addEventListener('timeupdate', updateProgress);
+
+audio.addEventListener('ended', () => {
+  if (CONFIG.autoplayNext) nextTrack();
+  else { isPlaying = false; updatePlayUI(); }
+});
+
+audio.addEventListener('canplay', () => {
+  loadingBar.classList.remove('active');
+});
+
+audio.addEventListener('waiting', () => {
+  loadingBar.classList.add('active');
+});
+
+audio.addEventListener('playing', () => {
+  isPlaying = true;
+  loadingBar.classList.remove('active');
+  updatePlayUI();
+});
+
+audio.addEventListener('pause', () => {
+  isPlaying = false;
+  updatePlayUI();
+});
+
+audio.addEventListener('error', () => {
+  isPlaying = false;
+  loadingBar.classList.remove('active');
+  errorBanner.classList.add('visible');
+  updatePlayUI();
+});
+
+/* Progress bar scrubbing */
+progressWrap.addEventListener('mousedown', startDrag);
+progressWrap.addEventListener('touchstart', startDrag, { passive: true });
+
+function startDrag(e) {
+  isDragging = true;
+  seekTo(e);
+}
+
+document.addEventListener('mousemove', (e) => { if (isDragging) seekTo(e); });
+document.addEventListener('touchmove', (e) => { if (isDragging) seekTo(e.touches[0]); }, { passive: true });
+document.addEventListener('mouseup',   () => { isDragging = false; });
+document.addEventListener('touchend',  () => { isDragging = false; });
+
+function seekTo(e) {
+  if (!audio.duration) return;
+  const rect = progressWrap.getBoundingClientRect();
+  const pct  = Math.min(Math.max((e.clientX - rect.left) / rect.width, 0), 1);
+  audio.currentTime = pct * audio.duration;
+  progressFill.style.width = (pct * 100) + '%';
+  timeCurrent.textContent  = formatTime(audio.currentTime);
+}
+
+/* Keyboard shortcuts */
+document.addEventListener('keydown', (e) => {
+  /* Ignore when typing in input fields */
+  if (['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)) return;
+
+  switch (e.code) {
+    case 'Space':
+      e.preventDefault();
+      togglePlay();
+      break;
+    case 'ArrowRight':
+      e.preventDefault();
+      if (e.shiftKey) nextTrack();
+      else { audio.currentTime = Math.min(audio.currentTime + 10, audio.duration || 0); }
+      break;
+    case 'ArrowLeft':
+      e.preventDefault();
+      if (e.shiftKey) prevTrack();
+      else { audio.currentTime = Math.max(audio.currentTime - 10, 0); }
+      break;
+    case 'ArrowUp':
+      e.preventDefault();
+      audio.volume = Math.min(audio.volume + 0.1, 1);
+      break;
+    case 'ArrowDown':
+      e.preventDefault();
+      audio.volume = Math.max(audio.volume - 0.1, 0);
+      break;
+  }
+});
+
+/* Info tabs */
+document.querySelectorAll('.info-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.info-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('lyrics-panel').style.display = tab.dataset.tab === 'lyrics' ? 'block' : 'none';
+    document.getElementById('notes-panel').style.display  = tab.dataset.tab === 'notes'  ? 'block' : 'none';
+  });
+});
+
+/* Modals */
+document.getElementById('btn-credits').addEventListener('click', () => {
+  renderCredits();
+  document.getElementById('credits-modal').classList.add('open');
+});
+document.getElementById('btn-gallery').addEventListener('click', () => {
+  renderGallery();
+  document.getElementById('gallery-modal').classList.add('open');
+});
+
+document.querySelectorAll('[data-close]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.getElementById(btn.dataset.close).classList.remove('open');
+  });
+});
+
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) overlay.classList.remove('open');
+  });
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.code === 'Escape') {
+    document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open'));
+  }
+});
+
+/* Clock */
+function updateClock() {
+  const now = new Date();
+  headerClock.textContent = now.toTimeString().slice(0, 5);
+}
+updateClock();
+setInterval(updateClock, 30000);
+
+/* Loop init */
+if (isLoop) btnLoop.classList.add('active');
+
+/* ============================================================
+   INITIALISE
+   ============================================================ */
+buildGallery();
+renderPlaylist();
+renderCredits();
+
+/* USB / OFFLINE NOTE:
+   When running from a USB drive or local folder:
+   - Open index.html directly in a browser, OR
+   - Use VS Code Live Server for best results
+   - All paths in TRACKS[].src and TRACKS[].artwork should be
+     relative to this HTML file (e.g. 'audio/01.wav')
+   - No internet connection required
+*/
+</script>
+</body>
+</html>
