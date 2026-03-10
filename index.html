@@ -3,6 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://pub-b333ae075b3b4a25901ab0700b4271c8.r2.dev; media-src 'self' blob: https://pub-b333ae075b3b4a25901ab0700b4271c8.r2.dev; connect-src 'self' https://pub-b333ae075b3b4a25901ab0700b4271c8.r2.dev; font-src 'self'; object-src 'none'">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#0d1117">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Lyraphilia">
+<link rel="apple-touch-icon" href="/icons/icon-152.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LYRAPHILIA DREAMS – COVERS</title>
 
@@ -2297,6 +2306,15 @@ renderCredits();
      relative to this HTML file (e.g. 'audio/01.wav')
    - No internet connection required
 */
+
+/* ── PWA SERVICE WORKER REGISTRATION ── */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(() => console.info('Service worker registered'))
+      .catch(e => console.info('SW registration skipped:', e.message));
+  });
+}
 </script>
 </body>
 </html>
